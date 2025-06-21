@@ -7,23 +7,25 @@ const port = 1225;
 //User router middleware
 import userRouter from './Route/userRoutes.js'
 
+//json middleware
+app.use(express.json());
+
+
+
 app.use('/api/users', userRouter)
 
 
 //importing  dbconnection
 import dbConnection from './db/dbConfig.js';
 
-app.listen(port, ()=>{
-    console.log(`server is running on port ${port}`)
-});
 
 async function start(){
     try{
         
        const result = await dbConnection.execute("select 'test' ");
-        //  app.listen(port,()=>{
-        // console.log(`server is running on port ${port}`);
-        //  });
+         await app.listen(port,()=>{
+        console.log(`server is running on port ${port}`);
+         });
        console.log('Database connection established');
        
     } 
@@ -45,3 +47,5 @@ start();
 //         console.log(`server is running on port ${port}`)
 //     }
 // })
+
+

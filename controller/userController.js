@@ -1,6 +1,7 @@
 import dbConnection from '../db/dbConfig.js';
 import bcrypt from 'bcrypt';
 import statuscode from 'http-status-codes';
+import jwt from 'jsonwebtoken';
 
 
 
@@ -38,7 +39,32 @@ async function register(req,res){
 }
 
 async function login(req,res){
-    res.send("User logged in successfully");
+    const {email, password} = req.body
+    if(!email || !password){
+        return res.status(statuscode.BAD_REQUEST).json({msg:"Please provide email and password"});
+    } 
+     try{
+        const [user]= await dbConnection.query("select username, userid, password from users where email =?",[email])
+        if(user.length == 0){
+            return res.status(statuscode.UNAUTHORIZED).json({msg:"Invalid email or password"});
+        }
+
+        //Comparing the password
+        const isMatch = await bcrypt.compare(password, user[0].password)
+        if(!isMatch){
+            return res.status(statuscode.UNAUTHORIZED).json({msg:"Invalid email or password"});
+        }
+
+        const username = user[0].username;
+        const userid = user[0].userid;
+        const token = jwt.sign({userid, username}, 'secret', {expiresIn: '1h'});
+        return res.status(statuscode.OK).json({msg: "Login successful", token});
+     }
+     catch(error){
+        console.error("Error during login:", error);
+        return res.status(statuscode.INTERNAL_SERVER_ERROR).json({msg:"Internal server error"});    
+
+}
 }
 
 async function checkout(req,res){

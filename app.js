@@ -1,11 +1,21 @@
 import express from 'express';
 const app = express();
+import dotenv from 'dotenv';
+dotenv.config();
 
 const port = 1225;
 
 
 //User router middleware
 import userRouter from './Route/userRoutes.js'
+//User router middleware
+import questionsRoutes from './Route/questionRoutes.js'
+
+//importing authMiddleware
+import authMiddleware from './middleware/authMiddleware.js';
+
+
+
 
 //json middleware
 app.use(express.json());
@@ -13,6 +23,7 @@ app.use(express.json());
 
 
 app.use('/api/users', userRouter)
+app.use('/api/questions',authMiddleware, questionsRoutes)
 
 
 //importing  dbconnection

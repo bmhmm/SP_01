@@ -57,7 +57,7 @@ async function login(req,res){
 
         const username = user[0].username;
         const userid = user[0].userid;
-        const token = jwt.sign({userid, username}, 'secret', {expiresIn: '1h'});
+        const token = jwt.sign({userid, username}, process.env.JWT_SECRET, {expiresIn: '1h'});
         return res.status(statuscode.OK).json({msg: "Login successful", token});
      }
      catch(error){
@@ -68,7 +68,10 @@ async function login(req,res){
 }
 
 async function checkout(req,res){
-    res.send("Checkout successful");
+  const username = req.user.username;
+  const userid = req.user.userid;
+  res.status(statuscode.OK).json({msg:`Valid user or Checkout  successful for user ${username} with ID ${userid}`});
+    // res.send("Checkout successful");
 }
 
 export {register, login, checkout};

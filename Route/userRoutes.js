@@ -6,6 +6,9 @@ const router= express.Router();
 import { register, login,checkout} from '../controller/userController.js';
 
 
+//importing authMiddleware
+import authMiddleware from '../middleware/authMiddleware.js';
+
 //register route
 router.post('/register',register)
 
@@ -13,7 +16,6 @@ router.post('/register',register)
 router.post('/login',login)
 
 //checkout route
-
-router.get('/check',checkout)
+router.get('/check',authMiddleware, checkout)
 
 export default router;
